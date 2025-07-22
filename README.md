@@ -11,14 +11,18 @@ gatk CreateSequenceDictionary -R genome.fa
 
 grep 'rRNA' genes.gtf  > rRNA.gtf
 
-gtfToGenePred -genePredExt rRNA.gtf rRNA.gtf.genePred
-awk 'BEGIN{OFS="\t"} {print $2, $4, $5, $3, $12}' rRNA.gtf.genePred > rRNA.gtf.genePred.shortlist
+gtfToGenePred -genePredExt rRNA.gtf rRNA.gtf.genePred \
+awk 'BEGIN{OFS="\t"} {print $2, $4, $5, $3, $12}' \
+rRNA.gtf.genePred > rRNA.gtf.genePred.shortlist
+
+#combine the files
 cat genome.dict rRNA.gtf.genePred.shortlist > rRNA.intervals.txt
 
 ##Convert gene annotations from GTF to genePred refFlat format:
 ##without gene names (geneID only)
 Conda activate ant_base
 gtfToGenePred -genePredExt -ignoreGroupsWithoutExons genes.gtf /dev/stdout | awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' >genes_refFlat.txt
+
 ##with gene namesgt	
 ~/soft/gtfToGenePred     -genePredExt     -geneNameAsName2     -ignoreGroupsWithoutExons  genes.gtf   /dev/stdout |     awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' >genes_refFlat.txt
 module load miniconda
